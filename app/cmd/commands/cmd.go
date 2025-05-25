@@ -10,14 +10,14 @@ import (
 )
 
 func Init() {
-	for _, dir := range []string{".git", ".git/objects", ".git/refs"} {
+	for _, dir := range []string{objects.ROOT, objects.OBJECT_STORE, objects.REFS_STORE} {
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			fmt.Fprintf(os.Stderr, "Error creating directory: %s\n", err)
 		}
 	}
 
 	headFileContents := []byte("ref: refs/heads/main\n")
-	if err := os.WriteFile(".git/HEAD", headFileContents, 0644); err != nil {
+	if err := os.WriteFile(objects.HEAD, headFileContents, 0644); err != nil {
 		fmt.Fprintf(os.Stderr, "Error writing file: %s\n", err)
 	}
 
@@ -43,4 +43,24 @@ func CatFile(args []string) {
 	}
 
 	fmt.Print(blob.Content)
+}
+
+func HashObject(args []string) {
+	fs := flag.NewFlagSet("hash-object", flag.ExitOnError)
+	var w string
+	fs.StringVar(&w, "w", "", "Text to be hashed and inserted into the object storage")
+	fs.Parse(args)
+
+	blob := objects.Blob{
+		Content: w,
+		Size:    uint(len(w)),
+	}
+
+	err := blob.Write()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error writing blob")
+		os.Exit(1)
+	}
+
+	fmt.Print(blob.Hash)
 }

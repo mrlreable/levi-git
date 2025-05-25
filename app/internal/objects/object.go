@@ -9,13 +9,15 @@ import (
 	"path"
 )
 
+const ROOT = ".git"
+const HEAD = ".git/HEAD"
 const OBJECT_STORE = ".git/objects/"
 const REFS_STORE = ".git/refs/"
 
 // Path: .git/objects/<hash first 2 characters>/<hash rest of the characters>
 type Object interface {
 	// Creates the object (blob, tree) and writes it to the objects directory
-	Write() bool
+	Write() error
 	Type() string
 }
 
@@ -26,9 +28,9 @@ type Blob struct {
 	Hash    string
 }
 
-func (b *Blob) Write() bool {
+func (b *Blob) Write() error {
 
-	return true
+	return nil
 }
 
 func (b *Blob) Type() string {
@@ -82,9 +84,8 @@ func Read(p string) (Blob, error) {
 type Tree struct {
 }
 
-func (t *Tree) Write() bool {
-
-	return true
+func (t *Tree) Write() error {
+	return nil
 }
 
 func (t *Tree) Type() string {

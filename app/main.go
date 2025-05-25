@@ -19,6 +19,8 @@ func main() {
 		commands.Init()
 	case "cat-file":
 		commands.CatFile(os.Args[2:])
+	case "hash-object":
+		commands.HashObject(os.Args[2:])
 	default:
 		fmt.Fprintf(os.Stderr, "Unknown command %s\n", command)
 		os.Exit(1)
